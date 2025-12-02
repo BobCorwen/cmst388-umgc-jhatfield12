@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Form styling */
+        label {
+            display: inline-block;
+            width: 125px;
+            text-align: left;
+        }
+        
+        input {
+            vertical-align: middle; 
+            margin-top: -1px;
+        }
+        
+        .form-row {
+            display: flex;
+            align-items: left;
+        }
+
+        textarea {
+            width: 250px;
+            padding: 5px;
+            height: 120px;
+            resize: none;
+        }
+
+        .radio-row,
+        .checkbox-row {
+        display: flex;
+        flex-direction: column;
+        }
+
+        .comments-row {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            display: inline-block;
+            margin-left: 10px;
+            color: #c00;
+            font-size: 0.9rem;
+        }
+    </style>
+    <script>
+        //Form Validation
+        function validateForm() {
+            let errors = 0;
+
+            //Assigning variables to each field for validation
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const address = document.getElementById('address');
+            const city = document.getElementById('city');
+            const state = document.getElementById('state');
+            const zip = document.getElementById('zip');
+            const phoneArea = document.getElementById('phone-3-digit');
+            const phoneLocal = document.getElementById('phone-7-digit');
+            const email = document.getElementById('email');
+            const confirmEmail = document.getElementById('confirm-email');
+            const mealChoices = document.querySelectorAll('input[name^="meal"]');
+            const contactCheckboxes = document.querySelectorAll('input[name="contact"]');
+
+            // Clear previous error messages
+            document.querySelectorAll('.error-message').forEach(span => {
+                span.textContent = "";
+            });
+
+            //Defining patterns for validation
+            const patterns = {
+                name: /^[A-Za-z]+(?:[-'\s][A-Za-z]+)*$/,
+                address: /^\d+\s+[A-Za-z0-9\s.'-]+$/,
+                city: /^[A-Za-z]+(?:[\s-][A-Za-z]+)*$/,
+                zip: /^\d{5}$/,
+                phoneArea: /^[0-9]{3}$/,
+                phoneLocal: /^[0-9]{7}$/,
+                email: /^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9.-]{1,252}\.[A-Za-z]{2,}$/
+            };
+
+            //First Name Validation
+            if (firstName.value === "" || firstName.value === "First Name" || !patterns.name.test(firstName.value)) {
+                document.getElementById("firstNameError").textContent = "Please enter a valid first name.";
+                errors++;
+            }
+
+            //Last Name Validation
+            if (lastName.value === "" || lastName.value === "Last Name" || !patterns.name.test(lastName.value)) {
+                document.getElementById("lastNameError").textContent = "Please enter a valid last name.";
+                errors++;
+            }
+
+            //Address Validation
+            if (address.value === "" || !patterns.address.test(address.value)) {
+                document.getElementById("addressError").textContent = "Please enter a valid address.";
+                errors++;
+            }
+
+            //City Validation
+            if (city.value === "" || !patterns.city.test(city.value)) {
+                document.getElementById("cityError").textContent = "Please enter a valid city.";
+                errors++;
+            }
+            
+            //State Validation
+            if (state.value === "") {
+                document.getElementById("stateError").textContent = "Please select a state.";
+                errors++;
+            }
+            
+            //Zip Code Validation
+            if (zip.value === "" || !patterns.zip.test(zip.value)) {
+                document.getElementById("zipError").textContent = "Please enter a valid zip code.";
+                errors++;
+            }
+
+            //Phone Area Code Validation
+            if (phoneArea.value === "" || !patterns.phoneArea.test(phoneArea.value)) {
+                document.getElementById("phoneAreaError").textContent = "Please enter a 3 digit area code.";
+                errors++;
+            }
+
+            //Phone Local Validation
+            if (phoneLocal.value === "" || !patterns.phoneLocal.test(phoneLocal.value)) {
+                document.getElementById("phoneLocalError").textContent = "Please enter a 7 digit phone number.";
+                errors++;
+            }
+
+            //Email Validation
+            if (email.value === "" || !patterns.email.test(email.value)) {
+                document.getElementById("emailError").textContent = "Please enter a valid email address.";
+                errors++;
+            }
+
+            //Confirm Email Validation
+            if (confirmEmail.value === "" || confirmEmail.value !== email.value) {
+                document.getElementById("confirmEmailError").textContent = "Please confirm your email address.";
+                errors++;
+            }
+
+            //Meal Preference Validation (at least one radio selected)
+            let mealSelected = false;
+            mealChoices.forEach(radio => {
+                if (radio.checked) {
+                    mealSelected = true;
+                }
+            });
+            if (!mealSelected) {
+                document.getElementById("mealError").textContent = "Please select a meal preference.";
+                errors++;
+            }
+            
+            //Contact Method Validation (at least two checkboxes selected)
+            const checkedContacts = Array.from(contactCheckboxes).filter(box => box.checked);
+            if (checkedContacts.length < 2) {
+                document.getElementById("contactError").textContent = "Please select at least two contact methods.";
+                errors++;
+            }
+            
+            //Final Validation
+            if (errors > 0) {
+                alert("Please fix the errors on the form before submitting.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <title>Project 2 - Registration Form</title>
+</head>
+<body>
+    <h2>Project 2 - Registration Form</h2>
+    <form action="mailto:enzu1221@gmail.com" method="post" enctype="text/plain" onsubmit="return validateForm()">
+        <!-- First and Last Name -->
+        <label for="firstName">First Name:*</label>
+        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+        <span id="firstNameError" class="error-message"></span>
+        <br><br>
+
+        <label for="lastName">Last Name:*</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+        <span id="lastNameError" class="error-message"></span>
+        <br><br>
+
+        <!-- Address -->
+        <label for="address">Address:*</label>
+        <input type="text" id="address" name="address" placeholder="Street Address" required>
+        <span id="addressError" class="error-message"></span>
+        <br><br>
+
+        <label for="address">City:*</label>
+        <input type="text" id="city" name="city" placeholder="City" required>
+        <span id="cityError" class="error-message"></span>
+        <br><br>
+         
+        <label for="state">State:*</label>
+        <select id="state" name="state" required>
+        <option value="">Select</option>
+        <option value="AL">AL</option>
+        <option value="AK">AK</option>
+        <option value="AZ">AZ</option>
+        <option value="AR">AR</option>
+        <option value="CA">CA</option>
+        <option value="CO">CO</option>
+        <option value="CT">CT</option>
+        <option value="DE">DE</option>
+        <option value="FL">FL</option>
+        <option value="GA">GA</option>
+        <option value="HI">HI</option>
+        <option value="ID">ID</option>
+        <option value="IL">IL</option>
+        <option value="IN">IN</option>
+        <option value="IA">IA</option>
+        <option value="KS">KS</option>
+        <option value="KY">KY</option>
+        <option value="LA">LA</option>
+        <option value="ME">ME</option>
+        <option value="MD">MD</option>
+        <option value="MA">MA</option>
+        <option value="MI">MI</option>
+        <option value="MN">MN</option>
+        <option value="MS">MS</option>
+        <option value="MO">MO</option>
+        <option value="MT">MT</option>
+        <option value="NE">NE</option>
+        <option value="NV">NV</option>
+        <option value="NH">NH</option>
+        <option value="NJ">NJ</option>
+        <option value="NM">NM</option>
+        <option value="NY">NY</option>
+        <option value="NC">NC</option>
+        <option value="ND">ND</option>
+        <option value="OH">OH</option>
+        <option value="OK">OK</option>
+        <option value="OR">OR</option>
+        <option value="PA">PA</option>
+        <option value="RI">RI</option>
+        <option value="SC">SC</option>
+        <option value="SD">SD</option>
+        <option value="TN">TN</option>
+        <option value="TX">TX</option>
+        <option value="UT">UT</option>
+        <option value="VT">VT</option>
+        <option value="VA">VA</option>
+        <option value="WA">WA</option>
+        <option value="WI">WI</option>
+        <option value="WV">WV</option>
+        <option value="WY">WY</option>
+        </select>
+        <span id="stateError" class="error-message"></span>
+        <br><br>
+
+        <label for="address">Zip Code:*</label>
+        <input type="text" id="zip" name="zip" placeholder="Zip Code (5 digits)" minlength="5" maxlength="5" required pattern="^\d{5}$">
+        <span id="zipError" class="error-message"></span>
+        <br><br>
+
+        <!-- Phone -->
+        <label for="phone">Phone:*</label>
+        <input type="tel" id="phone-3-digit" name="phone-3-digit" placeholder="###" size="2" minlength="3" maxlength="3" required>
+        <span id="phoneAreaError" class="error-message"></span>
+        <input type="tel" id="phone-7-digit" name="phone-7-digit" placeholder="#######" size="12" minlength="7" maxlength="7" required>
+        <span id="phoneLocalError" class="error-message"></span>
+        <br><br>
+
+        <!-- Email -->
+        <label for="email">Email:*</label>
+        <input type="email" id="email" name="email" placeholder="name@domain.com" required>
+        <span id="emailError" class="error-message"></span>
+        <br><br>
+
+        <label for="email">Confirm Email:*</label>
+        <input type="email" id="confirm-email" name="confirm-email" placeholder="name@domain.com" required>
+        <span id="confirmEmailError" class="error-message"></span>
+        <br><br>
+
+        <!-- Meal Preference -->
+        <div class="form-row">
+            <label for="meal">Meal Preference:*<br/><i>(select one)</i></label>
+            <div class="radio-row">
+                <label><input type="radio" id="meal" name="meal" value="Vegan" required>Vegan</label>
+                <label><input type="radio" id="meal" name="meal" value="Vegetarian" required>Vegetarian</label>
+                <label><input type="radio" id="meal" name="meal" value="Non-Vegetarion" required>Non-Vegetarion</label>
+            </div>
+            <span id="mealError" class="error-message"></span>
+        </div>
+        <br>
+
+        <!-- Contact Method -->
+        <div class="form-row">
+            <label for="contact">Contact Method:*<br/><i>(select more than one)</i></label>
+            <div class="checkbox-row">
+                <label><input type="checkbox" id="contact" name="contact" value="Phone">Phone</label>
+                <label><input type="checkbox" id="contact" name="contact" value="E-mail">E-mail</label>
+                <label><input type="checkbox" id="contact" name="contact" value="Mail">Mail</label>
+                <label><input type="checkbox" id="contact" name="contact" value="LinkedIn">LinkedIn</label>
+            </div>
+            <span id="contactError" class="error-message"></span>
+        </div>
+       <br>
+
+        <!-- Comments -->
+        <div class="comments-row">
+            <label for="comments">Comments:</label>
+            <textarea maxlength="250" id="comments" name="comments"></textarea>
+        </div>
+        <br>
+
+        <!-- Submit and Reset buttons -->
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
+
+    </form>
+</body>
+</html>
